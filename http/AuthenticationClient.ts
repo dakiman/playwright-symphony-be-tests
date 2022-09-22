@@ -1,15 +1,17 @@
 import {APIResponse, request} from '@playwright/test';
 import SignupRequest from "../types/SignupRequest";
 import LoginRequest from "../types/LoginRequest";
+import {API_BASE_URL} from "../config";
 
 export default class AuthenticationClient {
     private httpClient;
 
     async init() {
-        //TODO replace baseUrl hardocded with .env config values
         this.httpClient = await request.newContext({
-            baseURL: 'https://randomlyapi.symphony.is/api/',
+            baseURL: API_BASE_URL,
         })
+
+        return this;
     }
 
     async signup(request: SignupRequest): Promise<APIResponse> {

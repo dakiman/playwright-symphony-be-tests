@@ -7,8 +7,7 @@ import SignupRequest from "../types/SignupRequest";
 let authClient: AuthenticationClient;
 
 test.beforeAll(async () => {
-    authClient = new AuthenticationClient();
-    await authClient.init();
+    authClient = await new AuthenticationClient().init();
 })
 
 test('Signup', async () => {

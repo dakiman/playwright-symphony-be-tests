@@ -3,12 +3,9 @@ import AuthenticationClient from "../http/AuthenticationClient";
 export default class AuthenticationService {
     private authClient: AuthenticationClient;
 
-    constructor() {
-    }
-
     async init() {
-        this.authClient = new AuthenticationClient();
-        await this.authClient.init();
+        this.authClient = await new AuthenticationClient().init();
+        return this;
     }
 
     async getTokenForUser(username, password): Promise<string> {
