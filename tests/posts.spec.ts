@@ -4,8 +4,7 @@ import PostClient from "../http/PostClient";
 let postClient: PostClient;
 
 test.beforeAll(async () => {
-    postClient = new PostClient();
-    await postClient.init();
+    postClient = await new PostClient().init();
 })
 
 test('Add post', async() => {
@@ -13,6 +12,5 @@ test('Add post', async() => {
         text: 'My post body'
     });
 
-    console.log(response)
     expect(response.ok()).toBeTruthy();
 })

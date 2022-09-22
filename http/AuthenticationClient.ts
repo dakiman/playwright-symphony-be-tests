@@ -1,12 +1,12 @@
-import {APIResponse, request} from '@playwright/test';
+import {APIRequestContext, APIResponse, request} from '@playwright/test';
 import SignupRequest from "../types/SignupRequest";
 import LoginRequest from "../types/LoginRequest";
 import {API_BASE_URL} from "../config";
 
 export default class AuthenticationClient {
-    private httpClient;
+    private httpClient: APIRequestContext;
 
-    async init() {
+    async init(): Promise<AuthenticationClient> {
         this.httpClient = await request.newContext({
             baseURL: API_BASE_URL,
         })
@@ -15,12 +15,10 @@ export default class AuthenticationClient {
     }
 
     async signup(request: SignupRequest): Promise<APIResponse> {
-        return this.httpClient.post('auth/signup/', {
-            data: request
-        });
+        return this.httpClient.post('auth/signup/', {data: request});
     }
 
     async login(request: LoginRequest): Promise<APIResponse> {
-        return this.httpClient.post('auth/login/', { data: request })
+        return this.httpClient.post('auth/login/', {data: request})
     }
 }

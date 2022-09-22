@@ -10,9 +10,9 @@ export default class AuthenticationService {
 
     async getTokenForUser(username, password): Promise<string> {
         let response = await this.authClient.login({ username, password });
-
         let body = await response.json();
 
         return body.token;
     }
+
 }
