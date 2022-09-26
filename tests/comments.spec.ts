@@ -24,11 +24,31 @@ test('Add comment', async () => {
     expect(commentResponse.ok()).toBeTruthy();
 })
 
-test('Read comments on post', async () => {
+test('Add comment to post and read it back', async () => {
     let post = await postService.createNewPost(defaultAddPostRequest)
     let commentResponse = await commentClient.addComment({text: 'My comment', post: post.id});
     expect(commentResponse.ok()).toBeTruthy();
 
     let postCommentsResponse = await commentClient.getCommentsForPost(post.id);
     expect(postCommentsResponse.ok()).toBeTruthy();
+
+    let postCommentsResponseBody = await postCommentsResponse.json();
+    expect(postCommentsResponseBody.results.length).toBe(1);
+    expect(postCommentsResponseBody.results[0].text).toBe('My comment');
+})
+
+test('Add comment without text', async () => {
+    let post = await postService.createNewPost(defaultAddPostRequest)
+    let commentResponse = await commentClient.addComment({text: '', post: post.id});
+    expect(commentResponse.status()).toBe(400);
+})
+
+test('Add comment without post', async () => {
+    let commentResponse = await commentClient.addComment({text: 'My comment', post: null});
+    expect(commentResponse.status()).toBe(400);
+})
+
+test('Add comment to non-existant post', async () => {
+    let commentResponse = await commentClient.addComment({text: 'My comment', post: 999999});
+    expect(commentResponse.status()).toBe(400);
 })
