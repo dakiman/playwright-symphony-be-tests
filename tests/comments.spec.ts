@@ -8,13 +8,12 @@ import {readFileAsJson} from "../utils/FileUtils";
 let postClient: PostClient;
 let commentClient: CommentClient;
 let postService: PostService;
-let defaultAddPostRequest: AddPostRequest
+let defaultAddPostRequest: AddPostRequest = readFileAsJson('./data/static/defaultAddPostRequest.json')
 
 test.beforeAll(async () => {
     postClient = await new PostClient().init();
     commentClient = await new CommentClient().init();
     postService = await new PostService().init();
-    defaultAddPostRequest = readFileAsJson('./data/defaultAddPostRequest.json')
 })
 
 test('Add comment', async () => {

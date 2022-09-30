@@ -3,11 +3,12 @@ import AuthenticationClient from "../http/AuthenticationClient";
 import {generateRandomIdentifier, getDateWithOffsetYears} from "../utils/DataUtils";
 import {readFileAsJson} from "../utils/FileUtils";
 import SignupRequest from "../types/SignupRequest";
+import SignupRequestProvider from "../data/providers/SignupRequestProvider";
 
 let authClient: AuthenticationClient;
-let defaultSignupRequest: SignupRequest = readFileAsJson('./data/defaultSignupRequest.json');
-let validEmails: Array<string> = readFileAsJson('./data/validEmails.json');
-let invalidEmails: Array<string> = readFileAsJson('./data/invalidEmails.json');
+let defaultSignupRequest: SignupRequest = readFileAsJson('./data/static/defaultSignupRequest.json');
+let validEmails: Array<string> = readFileAsJson('./data/static/validEmails.json');
+let invalidEmails: Array<string> = readFileAsJson('./data/static/invalidEmails.json');
 
 test.beforeEach(async () => {
     authClient = await new AuthenticationClient().init();
@@ -28,9 +29,8 @@ validEmails.forEach(email => {
 
 invalidEmails.forEach(email => {
     test(`Signup new user with invalid email ${email}`, async () => {
-        let randomIdentifier = generateRandomIdentifier();
-        let username = 'user' + randomIdentifier;
-        let response = await authClient.signup({...defaultSignupRequest, email, username});
+        let request = SignupRequestProvider.getSignupRequest();
+        let response = await authClient.signup({...request, email});
         let responseBody = await response.json();
 
         expect(response.status()).toBe(400);
@@ -39,10 +39,8 @@ invalidEmails.forEach(email => {
 })
 
 test('Signup new user with invalid date of birth format', async () => {
-    let randomIdentifier = generateRandomIdentifier();
-    let email = 'user' + randomIdentifier + '@example.com';
-    let username = 'user' + randomIdentifier;
-    let response = await authClient.signup({...defaultSignupRequest, email, username, dateOfBirth: '1997/01/01'});
+    let request = SignupRequestProvider.getSignupRequest();
+    let response = await authClient.signup({...request, dateOfBirth: '1997/01/01'});
     let responseBody = await response.json();
 
     expect(response.status()).toBe(400);
@@ -50,11 +48,9 @@ test('Signup new user with invalid date of birth format', async () => {
 })
 
 test('Sigup new user that isnt atleast 18 years old', async () => {
-    let randomIdentifier = generateRandomIdentifier();
-    let email = 'user' + randomIdentifier + '@example.com';
-    let username = 'user' + randomIdentifier;
+    let request = SignupRequestProvider.getSignupRequest();
     let dateOfBirth = getDateWithOffsetYears(17);
-    let response = await authClient.signup({...defaultSignupRequest, email, username, dateOfBirth});
+    let response = await authClient.signup({...request, dateOfBirth});
     let responseBody = await response.json();
 
     expect(response.status()).toBe(400);
